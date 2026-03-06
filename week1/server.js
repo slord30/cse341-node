@@ -1,9 +1,12 @@
 // imports (packages first, then your files ie router)
 const express = require('express');
 const bodyParser = require('body-parser');
+const MongoClient = require('mongodb').MongoClient;
+const mongodb = require('./db/connect');
 const professionalRoutes = require('./routes/professionalRoute');
 
 // intialize the app
+const port = process.env.PORT || 8080;
 const app = express();
 
 // middleware (must come before routes)
@@ -20,4 +23,11 @@ app.use((req, res, next) => {
 // app.use('/professional', ...): This means your data is now located at http://localhost:8080/professional
 app.use('/professional', professionalRoutes);
 
-app.listen(8080);
+mongodb.initDb((err, mongodb) => {
+    if (err) {
+        console.log(err);
+    } else {
+        app.listen(port);
+        console.log(`Connected to DB and listening on ${port}`);
+    }
+});
